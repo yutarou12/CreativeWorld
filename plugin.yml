@@ -1,0 +1,13 @@
+---
+name: CreativeWorld
+main: yutarou\cw
+api:
+  - 3.0.0
+  - 4.0.0
+version: 1.0.0
+author: yutarou1241477
+commands:
+  cw:
+    description: §lクリエイティブワールドへ
+    usege: cw
+...
