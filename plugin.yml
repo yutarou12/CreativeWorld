@@ -8,6 +8,10 @@ version: 1.0.0
 author: yutarou1241477
 commands:
   cw:
-    description: §lクリエイティブワールドへ
+    description: [CW] §lクリエイティブワールドへ
     usege: cw
+  cw_reload:
+    description: [CW] §lConfigのリロード
+    usege: cw_reload
+    permission: true
 ...
