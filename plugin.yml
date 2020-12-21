@@ -6,12 +6,16 @@ api:
   - 4.0.0
 version: 1.0.0
 author: yutarou1241477
+description: クリエイティブワールドにテレポートします
 commands:
   cw:
-    description: [CW] §lクリエイティブワールドへ
-    usege: cw
+    description: "§l[CreativeWorld]クリエイティブワールドへ"
+    usage: "/cw"
   cw_reload:
-    description: [CW] §lConfigのリロード
-    usege: cw_reload
-    permission: true
+    description: "§l[CreativeWorld]Configのリロード"
+    usage: "/cw_reload"
+    permission: cw.op
+permissions:
+  cw.op:
+    default: op
 ...
