@@ -39,8 +39,6 @@ class cw extends PluginBase implements Listener{
             if($entity instanceof Player){
                 $posi = $event->getFrom()->level->getName();
                 $posi_2 = $event->getTo()->level->getName();
-                $this->getLogger()->info($posi);
-                $this->getLogger()->info($posi_2);
                 $player = $entity->getPlayer();
                 $player_name = $player->getName();
                 $level_name = $this->config->get("クリエイティブワールド名");
