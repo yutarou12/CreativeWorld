@@ -23,7 +23,8 @@ class cw extends PluginBase implements Listener{
 
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this,$this);
-        $this->getLogger()->info("§aテストプラグインを読み込みました");
+        $this->getLogger()->info(self::TAG."§aを読み込みました");
+        $this->getLogger()->info("制作者 yutarou1241477");
 
         $this->config = new Config($this->getDataFolder(). "config.yml", Config::YAML, array(
             "クリエイティブワールド名" => "creative",
