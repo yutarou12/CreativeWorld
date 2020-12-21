@@ -42,9 +42,7 @@ class cw extends PluginBase implements Listener{
                 $player = $entity->getPlayer();
                 $player_name = $player->getName();
                 $level_name = $this->config->get("クリエイティブワールド名");
-                if($posi === $posi_2) {
-                    $player->setGamemode(1);
-                }else if($posi !== $posi_2 && $posi === $level_name){
+                if($posi === $level_name){
                     $player->setGamemode(0);
                     $player->getInventory()->clearAll();
                     if($this->p_inv[$player_name]){
