@@ -27,7 +27,7 @@ class cw extends PluginBase implements Listener{
         $this->getLogger()->info("§aテストプラグインを読み込みました");
 
         $this->config = new Config($this->getDataFolder(). "config.yml", Config::YAML, array(
-            "クリエイティブワールド名" => "test",
+            "クリエイティブワールド名" => "creative",
             "x座標" => 116,
             "y座標" => 72,
             "z座標" => 54
@@ -70,12 +70,6 @@ class cw extends PluginBase implements Listener{
         if($p_level_name === $level_name){
             $player->setGamemode(0);
             $player->teleport($p_spawn);
-            /*$player->getInventory()->clearAll();
-            if($this->p_inv[$player_name]){
-                $player->getInventory()->setContents($this->p_inv[$player_name]);
-                unset($this->p_inv[$player_name]);
-            }
-            */
         }
     }
 
@@ -107,7 +101,7 @@ class cw extends PluginBase implements Listener{
                     }
                 }
                 if($sender->getLevel()->getName() === $level_name){
-                    $sender->sendMessage(self::TAG."§aクリエイティブに変更しました");
+                    $sender->sendMessage(self::TAG."§a既にクリエイティブワールドに居ます");
                     return true;
                 }else{
                     $inventry = $sender->getInventory()->getContents();
@@ -121,8 +115,6 @@ class cw extends PluginBase implements Listener{
                     $sender->sendMessage(self::TAG."§aクリエイティブワールドへテレポートしました");
                     $sender->sendMessage(self::TAG."§c元の所持品はこのワールド以外へ移動すると戻ります");
                 }
-
-
                 break;
         }
         return true;
