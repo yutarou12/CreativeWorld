@@ -4,47 +4,125 @@ namespace yutarou;
 
 use pocketmine\Player;
 use pocketmine\Server;
+
 use pocketmine\command\{Command, CommandSender};
+
 use pocketmine\event\entity\EntityTeleportEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
+
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 
+use pocketmine\utils\Config;
 use pocketmine\level\Position;
 
 class cw extends PluginBase implements Listener{
 
+    public $p_inv = [];
+    const TAG = "§e§l[§fCreativeWorld§e] §r";
+
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this,$this);
         $this->getLogger()->info("§aテストプラグインを読み込みました");
+
+        $this->config = new Config($this->getDataFolder(). "config.yml", Config::YAML, array(
+            "クリエイティブワールド名" => "test",
+            "x座標" => 116,
+            "y座標" => 72,
+            "z座標" => 54
+        ));
     }
 
-    public function onTp(EntityTeleportEvent $event){
+     public function onTp(EntityTeleportEvent $event){
+            $entity = $event->getEntity();
+            if($entity instanceof Player){
+                $posi = $event->getFrom()->level->getName();
+                $posi_2 = $event->getTo()->level->getName();
+                $this->getLogger()->info($posi);
+                $this->getLogger()->info($posi_2);
+                $player = $entity->getPlayer();
+                $player_name = $player->getName();
+                $level_name = $this->config->get("クリエイティブワールド名");
+                if($posi === $posi_2) {
+                    $player->setGamemode(1);
+                }else if($posi !== $posi_2 && $posi === $level_name){
+                    $player->setGamemode(0);
+                    $player->getInventory()->clearAll();
+                    if($this->p_inv[$player_name]){
+                        $player->getInventory()->setContents($this->p_inv[$player_name]);
+                        unset($this->p_inv[$player_name]);
+                    }
 
-        $posi = $event->getFrom()->level->getName();
-        $sposi = (string) $posi;
-        $to = $event->getTo();
-        $this->getLogger()->info($posi);
-        $this->getLogger()->info($to);
+                }
+            }
+
+    }
+
+    public function onQuit(PlayerQuitEvent $event){
+        $player = $event->getPlayer();
+        $player_name = $player->getName();
+        $p_spawn = $player->getSpawn();
+        $p_level = $player->getLevel();
+        $p_level_name = $p_level->getName();
+        $level_name = $this->config->get("クリエイティブワールド名");
+
+        if($p_level_name === $level_name){
+            $player->setGamemode(0);
+            $player->teleport($p_spawn);
+            /*$player->getInventory()->clearAll();
+            if($this->p_inv[$player_name]){
+                $player->getInventory()->setContents($this->p_inv[$player_name]);
+                unset($this->p_inv[$player_name]);
+            }
+            */
+        }
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool{
         switch ($label){
             case "cw":
                 if (!$sender instanceof Player) {
-                    $sender->sendMessage("§cプレイヤーのみ利用可能です。");
+                    $sender->sendMessage(self::TAG."§cプレイヤーのみ利用可能です");
                     return true;
                 }
-                if(!Server::getInstance()->isLevelLoaded("test")){
-                    if(!$this->getServer()->loadLevel("test")){
-                        $sender->sendMessage("§ワールドが削除されています...");
+                //config読み込み
+                $level_name = $this->config->get("クリエイティブワールド名");
+                $level_x = $this->config->get("x座標");
+                $level_y = $this->config->get("y座標");
+                $level_z = $this->config->get("z座標");
+
+                if(!Server::getInstance()->isLevelLoaded($level_name)){
+                    if(!$this->getServer()->loadLevel($level_name)){
+                        if($sender->isOp()){
+                            $sender->sendMessage(self::TAG."§cワールドが削除されているか、フォルダが見つかりません..");
+                            return true;
+                        }else{
+                            $sender->sendMessage(self::TAG."§cエラーが発生しました.鯖主に確認をお願いします");
+                            return true;
+                        }
                         return true;
-                    }else $this->getLogger()->info("レベルをロードしました");
+                    }else{
+                        $this->getLogger()->info(self::TAG."§fレベルをロードしました");
+                    }
                 }
-                $level = $this->getServer()->getLevelByName("test");
-                $targetPosition = new Position(116,72,54,$level);
-                $sender->setGamemode(1);
-                $sender->teleport($targetPosition);
-                $sender->sendMessage("§e§l[§fCreativeWorld§e] §r§aクリエイティブワールドへテレポートしました");
+                if($sender->getLevel()->getName() === $level_name){
+                    $sender->sendMessage(self::TAG."§aクリエイティブに変更しました");
+                    return true;
+                }else{
+                    $inventry = $sender->getInventory()->getContents();
+                    $pname = $sender->getName();
+                    $this->p_inv[$pname] = $inventry;
+                    $level = $this->getServer()->getLevelByName($level_name);
+                    $targetPosition = new Position($level_x,$level_y,$level_z,$level);
+                    $sender->setGamemode(1);
+                    $sender->teleport($targetPosition);
+                    $sender->getInventory()->clearAll();
+                    $sender->sendMessage(self::TAG."§aクリエイティブワールドへテレポートしました");
+                    $sender->sendMessage(self::TAG."§c元の所持品はこのワールド以外へ移動すると戻ります");
+                }
+
+
                 break;
         }
         return true;
