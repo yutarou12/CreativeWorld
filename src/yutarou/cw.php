@@ -8,7 +8,6 @@ use pocketmine\Server;
 use pocketmine\command\{Command, CommandSender};
 
 use pocketmine\event\entity\EntityTeleportEvent;
-use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 
 use pocketmine\event\Listener;
@@ -61,7 +60,6 @@ class cw extends PluginBase implements Listener{
 
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
-        $player_name = $player->getName();
         $p_spawn = $player->getSpawn();
         $p_level = $player->getLevel();
         $p_level_name = $p_level->getName();
@@ -114,6 +112,13 @@ class cw extends PluginBase implements Listener{
                     $sender->getInventory()->clearAll();
                     $sender->sendMessage(self::TAG."§aクリエイティブワールドへテレポートしました");
                     $sender->sendMessage(self::TAG."§c元の所持品はこのワールド以外へ移動すると戻ります");
+                }
+                break;
+            case "cw_reload":
+                if($sender->isOp()){
+                    $this->config->reload();
+                    $sender->sendMessage(self::TAG."§cConfigを再読み込みしました");
+                    return true;
                 }
                 break;
         }
